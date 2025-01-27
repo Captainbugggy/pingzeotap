@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website Pinger</title>
     <script>
+        let intervalId;
+
         const pingUrl = async () => {
             try {
                 const response = await fetch('https://chatbot-h3mz.onrender.com', {
@@ -23,11 +25,33 @@
             }
         };
 
-        // Start pinging every 20 seconds
-        window.onload = () => {
-            pingUrl(); // First ping immediately
-            setInterval(pingUrl, 40000); // Repeat every 20 seconds
+        const startPinging = () => {
+            if (!intervalId) {
+                pingUrl(); // First ping immediately
+                intervalId = setInterval(pingUrl, 40000); // Repeat every 40 seconds
+                console.log("Pinging started.");
+            }
         };
+
+        const stopPinging = () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+                console.log("Pinging stopped.");
+            }
+        };
+
+        // Handle tab visibility changes
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "visible") {
+                startPinging();
+            } else {
+                stopPinging();
+            }
+        });
+
+        // Start pinging when the page loads
+        window.onload = startPinging;
     </script>
     <style>
         body {
